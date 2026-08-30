@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src="https://js.puter.com/v2/"></script>
+    <script>
+        const models = [
+            { id: "moonshotai/kimi-k2.6", name: "Kimi K2.6" },
+            { id: "moonshotai/kimi-k2.5", name: "Kimi K2.5" },
+            { id: "moonshotai/kimi-k2-thinking", name: "Kimi K2 Thinking" }
+        ];
+
+        const prompt = "Write a short poem about coding";
+
+        // Run all three in parallel, but preserve order in display
+        Promise.all(
+            models.map(m => 
+                puter.ai.chat(prompt, { model: m.id })
+                    .then(response => ({ ...m, response }))
+                    .catch(err => ({ ...m, error: err.message }))
+            )
+        ).then(results => {
+            results.forEach(r => {
+                puter.print(<h2>${r.name}</h2>);
+                if (r.error) {
+                    puter.print(<p style="color:red">Error: ${r.error}</p>);
+                } else {
+                    puter.print(r.response);
+                }
+                puter.print("<hr>");
+            });
+        });
+    </script>
+</body>
+</html>
